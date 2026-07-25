@@ -1,0 +1,98 @@
+import java.util.*;
+
+public class Main {
+
+    static final double EPS = 1e-9;
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        double x1 = sc.nextDouble(), y1 = sc.nextDouble(), r1 = sc.nextDouble();
+        double x2 = sc.nextDouble(), y2 = sc.nextDouble(), r2 = sc.nextDouble();
+        double x3 = sc.nextDouble(), y3 = sc.nextDouble(), r3 = sc.nextDouble();
+
+        double a11 = 2.0 * (x2 - x1);
+        double a12 = 2.0 * (y2 - y1);
+        double a21 = 2.0 * (x3 - x1);
+        double a22 = 2.0 * (y3 - y1);
+
+        double det = a11 * a22 - a12 * a21;
+
+        if (Math.abs(det) < EPS) {
+            return;
+        }
+
+        double c1 = (x2 * x2 + y2 * y2) - (x1 * x1 + y1 * y1);
+        double c2 = (x3 * x3 + y3 * y3) - (x1 * x1 + y1 * y1);
+
+        double d1 = -(r2 * r2 - r1 * r1);
+        double d2 = -(r3 * r3 - r1 * r1);
+
+        double inv11 = a22 / det;
+        double inv12 = -a12 / det;
+        double inv21 = -a21 / det;
+        double inv22 = a11 / det;
+
+        double px0 = inv11 * c1 + inv12 * c2;
+        double py0 = inv21 * c1 + inv22 * c2;
+
+        double px1 = inv11 * d1 + inv12 * d2;
+        double py1 = inv21 * d1 + inv22 * d2;
+
+        double dx0 = px0 - x1;
+        double dy0 = py0 - y1;
+
+        double A = px1 * px1 + py1 * py1;
+        double B = 2.0 * (dx0 * px1 + dy0 * py1) - r1 * r1;
+        double C = dx0 * dx0 + dy0 * dy0;
+
+        ArrayList<Double> roots = new ArrayList<>();
+
+        if (Math.abs(A) < EPS) {
+            if (Math.abs(B) > EPS) {
+                roots.add(-C / B);
+            }
+        } else {
+            double D = B * B - 4.0 * A * C;
+
+            if (D >= -EPS) {
+                if (D < 0) D = 0;
+
+                double sqrtD = Math.sqrt(D);
+
+                roots.add((-B - sqrtD) / (2.0 * A));
+                roots.add((-B + sqrtD) / (2.0 * A));
+            }
+        }
+
+        boolean found = false;
+        double bestS = Double.MAX_VALUE;
+        double bestX = 0, bestY = 0;
+
+        for (double s : roots) {
+            if (s < 1.0 - 1e-7) continue;
+
+            double x = px0 + px1 * s;
+            double y = py0 + py1 * s;
+
+            double dA = (x - x1) * (x - x1) + (y - y1) * (y - y1);
+            double dB = (x - x2) * (x - x2) + (y - y2) * (y - y2);
+            double dC = (x - x3) * (x - x3) + (y - y3) * (y - y3);
+
+            if (Math.abs(dA - s * r1 * r1) > 1e-5) continue;
+            if (Math.abs(dB - s * r2 * r2) > 1e-5) continue;
+            if (Math.abs(dC - s * r3 * r3) > 1e-5) continue;
+
+            if (s < bestS) { // maximum observation angle
+                bestS = s;
+                bestX = x;
+                bestY = y;
+                found = true;
+            }
+        }
+
+        if (found) {
+            System.out.printf(Locale.US, "%.5f %.5f%n", bestX, bestY);
+        }
+    }
+}
