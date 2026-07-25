@@ -1,0 +1,45 @@
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        String s = sc.next();
+        String t = sc.next();
+
+        int x1 = s.charAt(0) - 'a';
+        int y1 = s.charAt(1) - '1';
+
+        int x2 = t.charAt(0) - 'a';
+        int y2 = t.charAt(1) - '1';
+
+        List<String> moves = new ArrayList<>();
+
+        while (x1 != x2 || y1 != y2) {
+            String move = "";
+
+            if (y1 < y2) {
+                move += "U";
+                y1++;
+            } else if (y1 > y2) {
+                move += "D";
+                y1--;
+            }
+
+            if (x1 < x2) {
+                move += "R";
+                x1++;
+            } else if (x1 > x2) {
+                move += "L";
+                x1--;
+            }
+
+            moves.add(move);
+        }
+
+        System.out.println(moves.size());
+        for (String move : moves) {
+            System.out.println(move);
+        }
+    }
+}
