@@ -1,0 +1,54 @@
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        int n = sc.nextInt();
+
+        String[] names = new String[n];
+        int[] scores = new int[n];
+
+        Map<String, Integer> finalScore = new HashMap<>();
+
+        for (int i = 0; i < n; i++) {
+            names[i] = sc.next();
+            scores[i] = sc.nextInt();
+
+            finalScore.put(names[i],
+                    finalScore.getOrDefault(names[i], 0) + scores[i]);
+        }
+
+        int maxScore = Integer.MIN_VALUE;
+
+        for (int score : finalScore.values()) {
+            maxScore = Math.max(maxScore, score);
+        }
+
+        Set<String> candidates = new HashSet<>();
+
+        for (Map.Entry<String, Integer> entry : finalScore.entrySet()) {
+            if (entry.getValue() == maxScore) {
+                candidates.add(entry.getKey());
+            }
+        }
+
+        Map<String, Integer> currentScore = new HashMap<>();
+
+        for (int i = 0; i < n; i++) {
+            String name = names[i];
+            int score = scores[i];
+
+            currentScore.put(name,
+                    currentScore.getOrDefault(name, 0) + score);
+
+            if (currentScore.get(name) >= maxScore &&
+                candidates.contains(name) &&
+                finalScore.get(name) == maxScore) {
+
+                System.out.println(name);
+                return;
+            }
+        }
+    }
+}
