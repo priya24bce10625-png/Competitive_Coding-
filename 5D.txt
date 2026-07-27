@@ -1,0 +1,58 @@
+import java.util.*;
+
+public class Main {
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        double a = sc.nextDouble();
+        double v = sc.nextDouble();
+
+        double l = sc.nextDouble();
+        double d = sc.nextDouble();
+        double w = sc.nextDouble();
+
+        if (w > v) w = v;
+
+        double time = 0.0;
+
+        if (w >= v) {
+            double sToV = v * v / (2.0 * a);
+
+            if (sToV >= l) {
+                time = Math.sqrt(2.0 * l / a);
+            } else {
+                time = v / a + (l - sToV) / v;
+            }
+        } else {
+
+            double need = v * v / (2.0 * a)
+                    + (v * v - w * w) / (2.0 * a);
+
+            if (need <= d) {
+                time += v / a; // accelerate to v
+                time += (d - need) / v; // cruise
+                time += (v - w) / a; // decelerate to w
+            } else {
+                double peak = Math.sqrt((2.0 * a * d + w * w) / 2.0);
+
+                time += peak / a;
+                time += (peak - w) / a;
+            }
+
+            double remaining = l - d;
+
+            double distToV = (v * v - w * w) / (2.0 * a);
+
+            if (distToV <= remaining) {
+                time += (v - w) / a;
+                time += (remaining - distToV) / v;
+            } else {
+                double finalSpeed = Math.sqrt(w * w + 2.0 * a * remaining);
+                time += (finalSpeed - w) / a;
+            }
+        }
+
+        System.out.printf(Locale.US, "%.12f%n", time);
+    }
+}
