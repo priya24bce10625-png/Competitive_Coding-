@@ -1,0 +1,58 @@
+import java.util.*;
+
+public class Main {
+
+    static boolean win(char[][] b, char p) {
+        for (int i = 0; i < 3; i++) {
+            if (b[i][0] == p && b[i][1] == p && b[i][2] == p) return true;
+            if (b[0][i] == p && b[1][i] == p && b[2][i] == p) return true;
+        }
+
+        if (b[0][0] == p && b[1][1] == p && b[2][2] == p) return true;
+        if (b[0][2] == p && b[1][1] == p && b[2][0] == p) return true;
+
+        return false;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        char[][] board = new char[3][3];
+        int xCount = 0, oCount = 0;
+
+        for (int i = 0; i < 3; i++) {
+            String s = sc.next();
+            for (int j = 0; j < 3; j++) {
+                board[i][j] = s.charAt(j);
+
+                if (board[i][j] == 'X') xCount++;
+                else if (board[i][j] == '0') oCount++;
+            }
+        }
+
+        boolean xWin = win(board, 'X');
+        boolean oWin = win(board, '0');
+
+        if (oCount > xCount || xCount > oCount + 1) {
+            System.out.println("illegal");
+        } else if (xWin && oWin) {
+            System.out.println("illegal");
+        } else if (xWin) {
+            if (xCount == oCount + 1)
+                System.out.println("the first player won");
+            else
+                System.out.println("illegal");
+        } else if (oWin) {
+            if (xCount == oCount)
+                System.out.println("the second player won");
+            else
+                System.out.println("illegal");
+        } else if (xCount + oCount == 9) {
+            System.out.println("draw");
+        } else if (xCount == oCount) {
+            System.out.println("first");
+        } else {
+            System.out.println("second");
+        }
+    }
+}
