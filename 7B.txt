@@ -1,0 +1,93 @@
+import java.util.*;
+
+public class Main {
+
+    static class Block {
+        int id;
+        int start;
+        int size;
+        boolean active;
+
+        Block(int id, int start, int size) {
+            this.id = id;
+            this.start = start;
+            this.size = size;
+            this.active = true;
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        int t = sc.nextInt();
+        int m = sc.nextInt();
+        sc.nextLine();
+
+        List<Block> blocks = new ArrayList<>();
+        Map<Integer, Block> map = new HashMap<>();
+
+        int nextId = 1;
+
+        for (int i = 0; i < t; i++) {
+            String line = sc.nextLine();
+
+            if (line.startsWith("alloc")) {
+                int size = Integer.parseInt(line.split(" ")[1]);
+
+                Collections.sort(blocks, Comparator.comparingInt(b -> b.start));
+
+                int pos = 0;
+                boolean allocated = false;
+
+                for (Block b : blocks) {
+                    if (!b.active) continue;
+
+                    if (b.start - pos >= size) {
+                        Block nb = new Block(nextId, pos, size);
+                        blocks.add(nb);
+                        map.put(nextId, nb);
+                        System.out.println(nextId);
+                        nextId++;
+                        allocated = true;
+                        break;
+                    }
+                    pos = b.start + b.size;
+                }
+
+                if (!allocated) {
+                    if (m - pos >= size) {
+                        Block nb = new Block(nextId, pos, size);
+                        blocks.add(nb);
+                        map.put(nextId, nb);
+                        System.out.println(nextId);
+                        nextId++;
+                    } else {
+                        System.out.println("NULL");
+                    }
+                }
+
+            } else if (line.startsWith("erase")) {
+                int id = Integer.parseInt(line.split(" ")[1]);
+
+                if (!map.containsKey(id) || !map.get(id).active) {
+                    System.out.println("ILLEGAL_ERASE_ARGUMENT");
+                } else {
+                    Block b = map.get(id);
+                    b.active = false;
+                    blocks.remove(b);
+                }
+
+            } else { // defragment
+                Collections.sort(blocks, Comparator.comparingInt(b -> b.start));
+
+                int pos = 0;
+                for (Block b : blocks) {
+                    if (b.active) {
+                        b.start = pos;
+                        pos += b.size;
+                    }
+                }
+            }
+        }
+    }
+}
