@@ -1,0 +1,37 @@
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        int n = sc.nextInt();
+        int[] t = new int[n];
+
+        for (int i = 0; i < n; i++) {
+            t[i] = sc.nextInt();
+        }
+
+        int left = 0;
+        int right = n - 1;
+
+        int aliceTime = 0;
+        int bobTime = 0;
+
+        int aliceCount = 0;
+        int bobCount = 0;
+
+        while (left <= right) {
+            if (aliceTime <= bobTime) {
+                aliceTime += t[left];
+                aliceCount++;
+                left++;
+            } else {
+                bobTime += t[right];
+                bobCount++;
+                right--;
+            }
+        }
+
+        System.out.println(aliceCount + " " + bobCount);
+    }
+}
