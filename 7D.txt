@@ -1,0 +1,58 @@
+import java.io.*;
+
+public class Main {
+
+    static final long MOD = 1000000007L;
+    static final long BASE = 911382323L;
+
+    public static void main(String[] args) throws Exception {
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String s = br.readLine();
+
+        int n = s.length();
+
+        long[] pow = new long[n + 1];
+        long[] pref = new long[n + 1];
+        long[] revPref = new long[n + 1];
+
+        pow[0] = 1;
+
+        for (int i = 1; i <= n; i++) {
+            pow[i] = (pow[i - 1] * BASE) % MOD;
+        }
+
+        for (int i = 0; i < n; i++) {
+            pref[i + 1] = (pref[i] * BASE + s.charAt(i)) % MOD;
+        }
+
+        String rev = new StringBuilder(s).reverse().toString();
+
+        for (int i = 0; i < n; i++) {
+            revPref[i + 1] = (revPref[i] * BASE + rev.charAt(i)) % MOD;
+        }
+
+        int[] degree = new int[n + 1];
+        long answer = 0;
+
+        for (int len = 1; len <= n; len++) {
+
+            long h1 = getHash(pref, pow, 0, len - 1);
+            long h2 = getHash(revPref, pow, n - len, n - 1);
+
+            if (h1 == h2) {
+                degree[len] = degree[len / 2] + 1;
+            }
+
+            answer += degree[len];
+        }
+
+        System.out.println(answer);
+    }
+
+    static long getHash(long[] hash, long[] pow, int l, int r) {
+        long res = (hash[r + 1] - hash[l] * pow[r - l + 1]) % MOD;
+        if (res < 0) res += MOD;
+        return res;
+    }
+}
