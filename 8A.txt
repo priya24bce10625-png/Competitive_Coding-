@@ -1,0 +1,42 @@
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        String s = sc.next();
+        String first = sc.next();
+        String second = sc.next();
+
+        boolean forward = false;
+        boolean backward = false;
+
+        int pos1 = s.indexOf(first);
+        if (pos1 != -1) {
+            int pos2 = s.indexOf(second, pos1 + first.length());
+            if (pos2 != -1) {
+                forward = true;
+            }
+        }
+
+        String rev = new StringBuilder(s).reverse().toString();
+
+        pos1 = rev.indexOf(first);
+        if (pos1 != -1) {
+            int pos2 = rev.indexOf(second, pos1 + first.length());
+            if (pos2 != -1) {
+                backward = true;
+            }
+        }
+
+        if (forward && backward) {
+            System.out.println("both");
+        } else if (forward) {
+            System.out.println("forward");
+        } else if (backward) {
+            System.out.println("backward");
+        } else {
+            System.out.println("fantasy");
+        }
+    }
+}
