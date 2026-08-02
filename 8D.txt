@@ -1,0 +1,119 @@
+import java.util.*;
+
+public class Main {
+
+    static final double EPS = 1e-9;
+
+    static class Point {
+        double x, y;
+
+        Point(double x, double y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    static Point C, H, S;
+    static double a, b;
+
+    static double dist(Point p, Point q) {
+        double dx = p.x - q.x;
+        double dy = p.y - q.y;
+        return Math.hypot(dx, dy);
+    }
+
+    static boolean inside(Point p, Point c, double r) {
+        return dist(p, c) <= r + 1e-7;
+    }
+
+    static void addIntersections(Point c1, double r1,
+                                 Point c2, double r2,
+                                 List<Point> pts) {
+
+        double d = dist(c1, c2);
+
+        if (d > r1 + r2 + EPS) return;
+        if (d < Math.abs(r1 - r2) - EPS) return;
+        if (d < EPS) return;
+
+        double x = (d * d - r2 * r2 + r1 * r1) / (2.0 * d);
+        double h2 = r1 * r1 - x * x;
+
+        if (h2 < -EPS) return;
+        if (h2 < 0) h2 = 0;
+
+        double h = Math.sqrt(h2);
+
+        double vx = (c2.x - c1.x) / d;
+        double vy = (c2.y - c1.y) / d;
+
+        double px = c1.x + vx * x;
+        double py = c1.y + vy * x;
+
+        pts.add(new Point(
+                px + (-vy) * h,
+                py + (vx) * h));
+
+        pts.add(new Point(
+                px - (-vy) * h,
+                py - (vx) * h));
+    }
+
+    static boolean feasible(double L) {
+
+        double r1 = L;
+        double r2 = a - L;
+        double r3 = b - L;
+
+        if (r1 < -EPS || r2 < -EPS || r3 < -EPS)
+            return false;
+
+        List<Point> candidates = new ArrayList<>();
+
+        candidates.add(C);
+        candidates.add(H);
+        candidates.add(S);
+
+        addIntersections(C, r1, H, r2, candidates);
+        addIntersections(C, r1, S, r3, candidates);
+        addIntersections(H, r2, S, r3, candidates);
+
+        for (Point p : candidates) {
+            if (inside(p, C, r1) &&
+                inside(p, H, r2) &&
+                inside(p, S, r3)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        double t1 = sc.nextDouble();
+        double t2 = sc.nextDouble();
+
+        C = new Point(sc.nextDouble(), sc.nextDouble());
+        H = new Point(sc.nextDouble(), sc.nextDouble());
+        S = new Point(sc.nextDouble(), sc.nextDouble());
+
+        a = dist(C, S) + t1;
+        b = dist(C, H) + t2;
+
+        double lo = 0.0;
+        double hi = Math.min(a, b);
+
+        for (int it = 0; it < 100; it++) {
+            double mid = (lo + hi) / 2.0;
+
+            if (feasible(mid))
+                lo = mid;
+            else
+                hi = mid;
+        }
+
+        System.out.printf(Locale.US, "%.10f%n", lo);
+    }
+}
