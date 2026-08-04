@@ -1,0 +1,24 @@
+import java.util.*;
+
+public class Main {
+    static long n;
+    static int count = 0;
+
+    static void dfs(long num) {
+        if (num > n) return;
+
+        if (num > 0) count++;
+
+        dfs(num * 10);
+        dfs(num * 10 + 1);
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        n = sc.nextLong();
+
+        dfs(1);
+
+        System.out.println(count);
+    }
+}
