@@ -1,0 +1,137 @@
+import java.util.*;
+
+public class Main {
+
+    static class Pair {
+        int a, b;
+
+        Pair(int a, int b) {
+            if (a <= b) {
+                this.a = a;
+                this.b = b;
+            } else {
+                this.a = b;
+                this.b = a;
+            }
+        }
+    }
+
+    static List<Integer>[] g;
+    static int[] deg;
+    static boolean[] vis;
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        int n = sc.nextInt();
+        int m = sc.nextInt();
+
+        g = new ArrayList[n + 1];
+        deg = new int[n + 1];
+
+        for (int i = 1; i <= n; i++) {
+            g[i] = new ArrayList<>();
+        }
+
+        for (int i = 0; i < m; i++) {
+            int u = sc.nextInt();
+            int v = sc.nextInt();
+
+            if (u == v) {
+                deg[u] += 2;
+                g[u].add(v);
+            } else {
+                deg[u]++;
+                deg[v]++;
+                g[u].add(v);
+                g[v].add(u);
+            }
+        }
+
+        for (int i = 1; i <= n; i++) {
+            if (deg[i] > 2) {
+                System.out.println("NO");
+                return;
+            }
+        }
+
+        vis = new boolean[n + 1];
+        List<Pair> open = new ArrayList<>();
+
+        for (int i = 1; i <= n; i++) {
+            if (!vis[i]) {
+
+                List<Integer> comp = new ArrayList<>();
+                Queue<Integer> q = new LinkedList<>();
+
+                q.add(i);
+                vis[i] = true;
+
+                while (!q.isEmpty()) {
+                    int v = q.poll();
+                    comp.add(v);
+
+                    for (int to : g[v]) {
+                        if (!vis[to]) {
+                            vis[to] = true;
+                            q.add(to);
+                        }
+                    }
+                }
+
+                List<Integer> ends = new ArrayList<>();
+                boolean allDeg2 = true;
+
+                for (int v : comp) {
+                    if (deg[v] < 2) ends.add(v);
+                    if (deg[v] != 2) allDeg2 = false;
+                }
+
+                if (allDeg2) {
+                    continue; // already a cycle
+                }
+
+                if (comp.size() == 1 && deg[comp.get(0)] == 0) {
+                    int v = comp.get(0);
+                    open.add(new Pair(v, v));
+                } else if (ends.size() == 2) {
+                    open.add(new Pair(ends.get(0), ends.get(1)));
+                } else {
+                    System.out.println("NO");
+                    return;
+                }
+            }
+        }
+
+        if (open.isEmpty()) {
+            System.out.println("YES");
+            System.out.println(0);
+            return;
+        }
+
+        open.sort(Comparator.comparingInt(p -> p.a));
+
+        List<Pair> ans = new ArrayList<>();
+
+        if (open.size() == 1) {
+            Pair p = open.get(0);
+            ans.add(new Pair(p.a, p.b));
+        } else {
+            int k = open.size();
+
+            for (int i = 0; i < k; i++) {
+                Pair cur = open.get(i);
+                Pair nxt = open.get((i + 1) % k);
+
+                ans.add(new Pair(cur.b, nxt.a));
+            }
+        }
+
+        System.out.println("YES");
+        System.out.println(ans.size());
+
+        for (Pair p : ans) {
+            System.out.println(p.a + " " + p.b);
+        }
+    }
+}
