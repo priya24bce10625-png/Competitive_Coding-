@@ -1,0 +1,69 @@
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        int N = sc.nextInt();
+        int K = sc.nextInt();
+
+        int[] requests = new int[N];
+        for (int i = 0; i < N; i++) {
+            requests[i] = sc.nextInt();
+        }
+
+        boolean[][] occupied = new boolean[K + 1][K + 1];
+        int center = (K + 1) / 2;
+
+        for (int m : requests) {
+
+            long bestCost = Long.MAX_VALUE;
+            int bestRow = -1;
+            int bestL = -1;
+
+            for (int row = 1; row <= K; row++) {
+                for (int left = 1; left + m - 1 <= K; left++) {
+
+                    int right = left + m - 1;
+
+                    boolean free = true;
+                    for (int seat = left; seat <= right; seat++) {
+                        if (occupied[row][seat]) {
+                            free = false;
+                            break;
+                        }
+                    }
+
+                    if (!free) continue;
+
+                    long cost = 0;
+                    for (int seat = left; seat <= right; seat++) {
+                        cost += Math.abs(row - center)
+                              + Math.abs(seat - center);
+                    }
+
+                    if (cost < bestCost ||
+                        (cost == bestCost && row < bestRow) ||
+                        (cost == bestCost && row == bestRow && left < bestL)) {
+
+                        bestCost = cost;
+                        bestRow = row;
+                        bestL = left;
+                    }
+                }
+            }
+
+            if (bestRow == -1) {
+                System.out.println("-1");
+            } else {
+                int bestR = bestL + m - 1;
+
+                for (int seat = bestL; seat <= bestR; seat++) {
+                    occupied[bestRow][seat] = true;
+                }
+
+                System.out.println(bestRow + " " + bestL + " " + bestR);
+            }
+        }
+    }
+}
