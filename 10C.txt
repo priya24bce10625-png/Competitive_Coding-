@@ -1,0 +1,43 @@
+import java.util.*;
+
+public class Main {
+
+    static int digitalRootProduct(int a, int b) {
+        int x = (a == 9) ? 0 : a;
+        int y = (b == 9) ? 0 : b;
+
+        int p = (x * y) % 9;
+        return p == 0 ? 9 : p;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        long N = sc.nextLong();
+
+        long[] cnt = new long[10]; // 1..9
+
+        long base = N / 9;
+        int rem = (int) (N % 9);
+
+        for (int r = 1; r <= 9; r++) {
+            cnt[r] = base + (r <= rem ? 1 : 0);
+        }
+
+        long passCount = 0;
+
+        for (int a = 1; a <= 9; a++) {
+            for (int b = 1; b <= 9; b++) {
+                int c = digitalRootProduct(a, b);
+                passCount += cnt[a] * cnt[b] * cnt[c];
+            }
+        }
+
+        long trueCount = 0;
+        for (long a = 1; a <= N; a++) {
+            trueCount += N / a; // number of b such that a*b <= N
+        }
+
+        System.out.println(passCount - trueCount);
+    }
+}
