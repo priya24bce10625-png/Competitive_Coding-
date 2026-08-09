@@ -1,0 +1,72 @@
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        int n = sc.nextInt();
+        int[] a = new int[n];
+
+        for (int i = 0; i < n; i++) {
+            a[i] = sc.nextInt();
+        }
+
+        int m = sc.nextInt();
+        int[] b = new int[m];
+
+        for (int i = 0; i < m; i++) {
+            b[i] = sc.nextInt();
+        }
+
+        int[] dp = new int[m];
+        int[] parent = new int[m];
+
+        Arrays.fill(parent, -1);
+
+        for (int i = 0; i < n; i++) {
+            int current = 0;
+            int last = -1;
+
+            for (int j = 0; j < m; j++) {
+
+                if (a[i] == b[j]) {
+                    if (current + 1 > dp[j]) {
+                        dp[j] = current + 1;
+                        parent[j] = last;
+                    }
+                }
+
+                if (a[i] > b[j] && dp[j] > current) {
+                    current = dp[j];
+                    last = j;
+                }
+            }
+        }
+
+        int len = 0;
+        int pos = -1;
+
+        for (int i = 0; i < m; i++) {
+            if (dp[i] > len) {
+                len = dp[i];
+                pos = i;
+            }
+        }
+
+        System.out.println(len);
+
+        List<Integer> ans = new ArrayList<>();
+
+        while (pos != -1) {
+            ans.add(b[pos]);
+            pos = parent[pos];
+        }
+
+        Collections.reverse(ans);
+
+        for (int x : ans) {
+            System.out.print(x + " ");
+        }
+        System.out.println();
+    }
+}
