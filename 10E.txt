@@ -1,0 +1,54 @@
+import java.util.*;
+
+public class Main {
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        int n = sc.nextInt();
+        long[] c = new long[n + 1];
+
+        for (int i = 1; i <= n; i++) {
+            c[i] = sc.nextLong();
+        }
+
+        long answer = Long.MAX_VALUE;
+
+        for (int i = 2; i <= n; i++) {
+            for (int j = i; j <= n; j++) {
+
+                long rem = c[i - 1] - 1;
+                long greedyCoins = 0;
+
+                for (int k = i; k <= j; k++) {
+                    long take = rem / c[k];
+                    rem -= take * c[k];
+                    greedyCoins += take;
+                }
+
+                long x = (c[i - 1] - 1 - rem) + c[j];
+                long originalX = x;
+
+                greedyCoins++; // coin c[j]
+
+                if (originalX >= answer) {
+                    continue;
+                }
+
+                long optimalMinusGreedy = greedyCoins;
+
+                for (int k = 1; k <= n; k++) {
+                    long take = x / c[k];
+                    x -= take * c[k];
+                    optimalMinusGreedy -= take;
+                }
+
+                if (optimalMinusGreedy < 0) {
+                    answer = originalX;
+                }
+            }
+        }
+
+        System.out.println(answer == Long.MAX_VALUE ? -1 : answer);
+    }
+}
