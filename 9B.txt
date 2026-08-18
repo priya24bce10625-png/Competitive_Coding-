@@ -1,0 +1,48 @@
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        int n = sc.nextInt();
+        int vb = sc.nextInt();
+        int vs = sc.nextInt();
+
+        int[] x = new int[n];
+        for (int i = 0; i < n; i++) {
+            x[i] = sc.nextInt();
+        }
+
+        int xu = sc.nextInt();
+        int yu = sc.nextInt();
+
+        int answer = 2; // at least stop 2
+        double bestTime = Double.MAX_VALUE;
+        double bestDist = Double.MAX_VALUE;
+
+        for (int i = 1; i < n; i++) { // stop indices 2..n
+            double busTime = (double) x[i] / vb;
+
+            double dist = Math.sqrt(
+                    (long) (xu - x[i]) * (xu - x[i]) +
+                    (long) yu * yu
+            );
+
+            double runTime = dist / vs;
+            double totalTime = busTime + runTime;
+
+            if (totalTime < bestTime - 1e-9) {
+                bestTime = totalTime;
+                bestDist = dist;
+                answer = i + 1; // 1-based index
+            } else if (Math.abs(totalTime - bestTime) <= 1e-9) {
+                if (dist < bestDist - 1e-9) {
+                    bestDist = dist;
+                    answer = i + 1;
+                }
+            }
+        }
+
+        System.out.println(answer);
+    }
+}
