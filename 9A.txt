@@ -1,0 +1,29 @@
+import java.util.*;
+
+public class Main {
+
+    static int gcd(int a, int b) {
+        while (b != 0) {
+            int temp = a % b;
+            a = b;
+            b = temp;
+        }
+        return a;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        int Y = sc.nextInt();
+        int W = sc.nextInt();
+
+        int m = Math.max(Y, W);
+
+        int numerator = 7 - m;
+        int denominator = 6;
+
+        int g = gcd(numerator, denominator);
+
+        System.out.println((numerator / g) + "/" + (denominator / g));
+    }
+}
