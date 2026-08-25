@@ -1,0 +1,96 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+const int N = 255;
+
+int n, m;
+char s[N][N];
+
+int dx[8] = {-1, 1, 0, 0, -1, -1, 1, 1};
+int dy[8] = {0, 0, -1, 1, -1, 1, -1, 1};
+
+int square1(int x, int y) {
+    int a = 1, b = 1, c = 1, d = 1;
+
+    while (x + 1 <= n && s[x + 1][y] == '1') x++, a++;
+    while (y + 1 <= m && s[x][y + 1] == '1') y++, b++;
+    while (x - 1 > 0 && s[x - 1][y] == '1') x--, c++;
+    while (y - 1 > 0 && s[x][y - 1] == '1') y--, d++;
+
+    if (a == b && b == c && c == d) return a;
+    return 0;
+}
+
+int square2(int x, int y) {
+    int a = 1, b = 1, c = 1, d = 1;
+
+    while (x + 1 <= n && y - 1 > 0 && s[x + 1][y - 1] == '1')
+        x++, y--, a++;
+
+    while (x + 1 <= n && y + 1 <= m && s[x + 1][y + 1] == '1')
+        x++, y++, b++;
+
+    while (x - 1 > 0 && y + 1 <= m && s[x - 1][y + 1] == '1')
+        x--, y++, c++;
+
+    while (x - 1 > 0 && y - 1 > 0 && s[x - 1][y - 1] == '1')
+        x--, y--, d++;
+
+    if (a == b && b == c && c == d) return a;
+    return 0;
+}
+
+int dfs(int x, int y) {
+    s[x][y] = '0';
+    int cnt = 1;
+
+    for (int k = 0; k < 8; k++) {
+        int nx = x + dx[k];
+        int ny = y + dy[k];
+
+        if (nx >= 1 && nx <= n &&
+            ny >= 1 && ny <= m &&
+            s[nx][ny] == '1') {
+            cnt += dfs(nx, ny);
+        }
+    }
+    return cnt;
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int T;
+    cin >> T;
+
+    while (T--) {
+        cin >> n >> m;
+
+        for (int i = 1; i <= n; i++) {
+            cin >> (s[i] + 1);
+        }
+
+        int ans = 0;
+
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= m; j++) {
+                if (s[i][j] == '1') {
+
+                    int a = square1(i, j);
+                    int b = square2(i, j);
+
+                    int comp = dfs(i, j);
+
+                    if (comp == 4 * (a - 1) ||
+                        comp == 4 * (b - 1))
+                        ans++;
+                }
+            }
+        }
+
+        cout << ans << '\n';
+    }
+
+    return 0;
+}
